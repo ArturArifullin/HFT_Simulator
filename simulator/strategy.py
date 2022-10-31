@@ -54,8 +54,8 @@ class BestPosStrategy:
         #all updates list
         updates_list = []
         #current best positions
-        best_bid = -np.inf
-        best_ask = np.inf
+        price_bid = -np.inf
+        price_ask = np.inf
         
         #Standart dev 
         sd = None 
@@ -88,7 +88,7 @@ class BestPosStrategy:
             for update in updates:
                 #update best position
                 if isinstance(update, MdUpdate):
-                    #best_bid, best_ask = update_best_positions(best_bid, best_ask, update)
+                    #price_bid, price_ask = update_best_positions(price_bid, price_ask, update)
                     md_list.append(update)
                 elif isinstance(update, OwnTrade):
                     trades_list.append(update)
@@ -158,7 +158,7 @@ class BestPosStrategy:
                 if ( trade.side == 'BID' ):
                     q += trade.size
                 else:
-                    q -+ trade.size
+                    q -= trade.size
             
             #Reserve price
             r = list_of_mid_prices[-1] - q * self.gamma * sd ** 2
@@ -192,15 +192,15 @@ class BestPosStrategy:
                 print('_______________')
                 '''
                 #Making new price of orders
-                best_ask = r + spread / 2
-                best_bid = r - spread / 2
+                price_ask = r + spread / 2
+                price_bid = r - spread / 2
                             
-                if ( best_ask is not None and best_bid is not None):
+                if ( price_ask is not None and price_bid is not None):
                     if receive_ts - prev_time >= self.delay:
                         prev_time = receive_ts
                         #place order
-                        bid_order = sim.place_order( receive_ts, 0.001, 'BID', best_bid )
-                        ask_order = sim.place_order( receive_ts, 0.001, 'ASK', best_ask )
+                        bid_order = sim.place_order( receive_ts, 0.001, 'BID', price_bid )
+                        ask_order = sim.place_order( receive_ts, 0.001, 'ASK', price_ask )
                         ongoing_orders[bid_order.order_id] = bid_order
                         ongoing_orders[ask_order.order_id] = ask_order
 
